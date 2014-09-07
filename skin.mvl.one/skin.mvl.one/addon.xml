@@ -1,0 +1,15 @@
+<addon id="skin.mvl.one" version="1.0.0" name="MVL Skin" provider-name="Mukto Software Ltd.">
+  <requires>
+    <import addon="xbmc.gui" version="5.0.1"/>
+  </requires>
+  <extension
+    point="xbmc.gui.skin"
+    defaultthemename="Textures.xbt"
+    debugging="false">
+    <res width="1920" height="1080" aspect="16:9" default="true" folder="1080i" />
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <description>Default skin for MVL addon.</description>
+  </extension>
+</addon>

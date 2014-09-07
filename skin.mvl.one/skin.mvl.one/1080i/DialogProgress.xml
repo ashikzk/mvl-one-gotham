@@ -1,0 +1,112 @@
+<window type="dialog">
+  <defaultcontrol always="true">10</defaultcontrol>
+  <!-- <include>OpenClose</include> -->
+  <controls>
+    <include>DimBG</include>
+
+      <control type="group" description="loading">
+        <posx>850</posx>
+        <posy>400</posy>
+        <control type="image">
+          <description>Busy animation</description>
+          <left>0</left>
+          <top>0</top>
+          <width>220</width>
+          <height>220</height>
+          <texture>dialogs/busy/static_busy.png</texture>
+          <aspectratio>keep</aspectratio>
+        </control>
+        <control type="image">
+          <description>Busy animation</description>
+          <left>0</left>
+          <top>0</top>
+          <width>220</width>
+          <height>220</height>
+          <texture>dialogs/busy/animation_1.png</texture>
+          <aspectratio>keep</aspectratio>
+          <animation effect="rotate" start="0" end="360" center="auto" time="2500" loop="true" condition="true">conditional</animation>
+        </control>
+        <control type="image">
+          <description>Busy animation</description>
+          <left>0</left>
+          <top>0</top>
+          <width>220</width>
+          <height>220</height>
+          <texture>dialogs/busy/animation_2.png</texture>
+          <aspectratio>keep</aspectratio>
+          <animation effect="rotate" start="0" end="-360" center="auto" time="2500" loop="true" condition="true">conditional</animation>
+        </control>  
+
+      </control>
+  
+    <control type="group" description="Content">
+      <posx>429</posx>
+      <posy>520</posy>
+<!--       <control type="image" description="Dialog BG">
+        <posx>90</posx>
+        <posy>0</posy>
+        <width>882</width>
+        <height>330</height>
+        <texture border="45">dialogs/TinyDialog.png</texture>
+      </control>
+ -->      
+      <control type="label" id="1" description="Heading hidden">
+		<visible>false</visible>
+        <posx>51</posx>
+        <posy>40</posy>
+        <height>40</height>
+        <width>960</width>
+        <textcolor>Orange</textcolor>
+        <align>center</align>
+        <font>-</font>
+      </control>
+      <control type="label" id="100" description="Heading and Progress">
+		<visible>false</visible>
+        <posx>51</posx>
+        <posy>40</posy>
+        <width>960</width>
+        <height>40</height>
+        <textcolor>Orange</textcolor>
+        <align>center</align>
+        <label>$INFO[Control.GetLabel(1)]$INFO[System.Progressbar,  ,%]</label>
+      </control>
+      <control type="label" id="2" description="Line 1">
+        <posx>51</posx>
+        <posy>100</posy>
+        <height>30</height>
+        <width>960</width>
+        <label></label>
+        <font>Details</font>
+        <align>center</align>
+      </control>
+      <control type="label" id="3" description="Line 2">
+        <posx>51</posx>
+        <posy>136</posy>
+        <height>30</height>
+        <width>960</width>
+        <label></label>
+        <font>ListDetails</font>
+        <align>center</align>
+      </control>
+      <control type="label" id="4" description="Line 3">
+        <posx>51</posx>
+        <posy>172</posy>
+        <height>30</height>
+        <width>960</width>
+        <label></label>
+        <font>ListDetails</font>
+        <align>center</align>
+      </control>
+<!--       <control type="button" id="10" description="Cancel">
+		<visible>false</visible> 
+        <posx>381</posx>
+        <posy>230</posy>
+        <height>60</height>
+        <width>300</width>
+        <label>$LOCALIZE[222]</label>
+        <align>center</align>
+        <pulseonselect>true</pulseonselect>
+      </control>
+ -->    </control>
+  </controls>
+</window>
