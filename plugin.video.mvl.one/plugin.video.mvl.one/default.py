@@ -1398,9 +1398,9 @@ def play_video(url, resolved_url, title, video_type, meta):
                 #print('- - -' +'Playback lock set. Sleeping for 250.')
                 xbmc.sleep(250)
 
-                play_started += 1
-                if play_started == 20:
-                    player.pause()
+                #play_started += 1
+                #if play_started == 20:
+                #    player.pause()
 
             #if we are here, it means playback has either stopped or finished
             #show popup again
