@@ -1076,13 +1076,8 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
                           'replace_context_menu': True
                       }]
 
-            #
-            # src_list = ['movreel', 'mightyupload', 'promptfile', 'firedrive', 'putlocker', 'novamov', 'nowvideo', 'gorillavid']
-            #, 'novamov', 'nowvideo', 'gorillavid']
-            #'lemupload',
-            #'promptfile', 'mightyupload',
-            #'hugefile', 'billionupload', '180upload',
-            # 'firedrive', 'putlocker',
+            src_list = ['movreel', 'billionupload', 'firedrive', 'putlocker', 'novamov', 'nowvideo', 'thefile', 'bestream', 'mightyupload', 'promptfile', 'gorillavid']
+            # ['movreel', 'mightyupload', 'promptfile', 'firedrive', 'putlocker', 'novamov', 'nowvideo', 'gorillavid']
 
             for urls in jsonObj:
                 if urls['resolved_URL'] == '':
@@ -1098,15 +1093,14 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
                 else:
                     urls['verified'] = 0
 
+                src_order = 0
+                for src in src_list:
+                    if urls['URL'].find(src) >= 0:
+                        break
+                    src_order += 1
 
-                # src_order = 0
-                # for src in src_list:
-                #     if urls['URL'].find(src) >= 0:
-                #         break
-                #     src_order += 1
+                urls['src_order'] = src_order
                 #
-                # urls['src_order'] = src_order
-
                 # if urls['resolved_URL'] == '':
                 #     urls['resolved_URL'] = 'NONE'
                 #     if urls['src_order'] > 0 and urls['last_resolved'] != '0000-00-00 00:00:00':
@@ -1119,9 +1113,9 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
                 #     #put resolved url above all by making it's src_order set to -1
                 #     #urls['src_order'] = len(src_list)
 
-            # jsonObj.sort(key=lambda x: x['src_order'])
+            jsonObj.sort(key=lambda x: x['src_order'])
             # jsonObj.sort(key=lambda x: x['view_count'], reverse=True)
-            jsonObj.sort(key=lambda x: x['verified'], reverse=True)
+            # jsonObj.sort(key=lambda x: x['verified'], reverse=True)
 
             count = 0
             sd_count = 0
@@ -1157,7 +1151,8 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
             for urls in jsonObj:
                 # if urls['resolved_URL'] == 'NONE':
                 #	  continue
-                if urls['URL'].find('billionupload') >= 0 or urls['URL'].find('180upload') >= 0 or \
+                # urls['URL'].find('billionupload') >= 0 or
+                if urls['URL'].find('180upload') >= 0 or \
                         urls['URL'].find('hugefile') >= 0 or urls['URL'].find('megafiles') >= 0 or \
                             urls['URL'].find('pandapla') >= 0 or urls['URL'].find('vidhog') >= 0 or \
                                 urls['URL'].find('epicshare') >= 0 or urls['URL'].find('vidplay') >= 0:
