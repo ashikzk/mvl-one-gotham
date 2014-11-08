@@ -96,7 +96,7 @@ usrsettings = xbmcaddon.Addon(id=common.plugin_id)
 # authentication['logged_in'] = 'false'
 #username = usrsettings.getSetting('username_xbmc')
 #activation_key = usrsettings.getSetting('activationkey_xbmc')
-page_limit = 100
+page_limit = 50
 username = ''
 activation_key = ''
 usrsettings.setSetting(id='mac_address', value=usrsettings.getSetting('mac_address'))
@@ -521,7 +521,7 @@ def get_categories(id, page):
             main_category_check = False
             is_search_category = False
             top_level_parent = 0
-            page_limit_cat = 100
+            page_limit_cat = 50
 
             xbmcplugin.setContent(pluginhandle, 'Movies')
 
@@ -1846,7 +1846,7 @@ def azlisting(category):
 def get_azlist(key, page, category):
     global mvl_view_mode
     mvl_view_mode = 50
-    page_limit_az = 200
+    page_limit_az = 50
 
     if check_internet():
 
