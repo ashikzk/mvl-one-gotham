@@ -143,7 +143,12 @@ def index():
 
     file_write('quit_log.dat', None)
 
-    if last_path == '':
+    # if last_path == '':
+    #     file_write('term_agree.dat', 'false')
+
+    #check if file exists. if not, create one first
+    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'term_agree.dat')
+    if not os.path.exists(file_path):
         file_write('term_agree.dat', 'false')
 
     # copy pre-cached db
@@ -353,7 +358,7 @@ def onClick_agree():
     # opener = urllib2.build_opener()
     # f = opener.open(req)
 
-    file_write('term_agree.dat', 'true')
+    # file_write('term_agree.dat', 'true')
 
     isAgree = True
 
@@ -2344,6 +2349,12 @@ class CustomTermsPopup(xbmcgui.WindowXMLDialog):
         elif control == 10:
             self.close()
             onClick_disAgree()
+        elif control == 9:
+            content = file_read('term_agree.dat')
+            if content == 'false':
+                file_write('term_agree.dat', 'true')
+            elif content == 'true':
+                file_write('term_agree.dat', 'false')
 
 
 class CustomPopup(xbmcgui.WindowXMLDialog):
