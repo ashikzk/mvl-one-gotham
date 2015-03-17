@@ -1053,7 +1053,7 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
         global mvl_view_mode
         mvl_view_mode = 50
         try:
-            url = server_url + "/api/index.php/api/categories_api/getVideoUrls?staging=1&video_id={0}".format(id)
+            url = server_url + "/api/index.php/api/categories_api/getVideoUrls?video_id={0}".format(id)
             plugin.log.info(url)
 
             req = urllib2.Request(url)
