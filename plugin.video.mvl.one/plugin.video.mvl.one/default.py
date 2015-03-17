@@ -391,8 +391,8 @@ def check_condition():
         heading = "Terms & Conditions"
         text = file_read('t&c.info')
 
-        print 'tc-text'
-        print text
+        # print 'tc-text'
+        # print text
 
         #dialog = xbmcgui.Dialog()
         #agree_ret = dialog.yesno(heading, text, yeslabel='Agree', nolabel='Disagree')
@@ -721,13 +721,13 @@ def get_categories(id, page):
                             is_season = False
                             if 'parent_title' in categories:
                                 #this must be a TV Show Season list
-                                mvl_meta = create_meta('tvshow', categories['parent_title'].encode('utf-8'), '', '')
+                                mvl_meta = create_meta('tvshow', categories['parent_title'].encode('utf-8'), categories['parent_year'], '')
                                 mvl_tvshow_title = categories['parent_title'].encode('utf-8')
                                 is_season = True
                                 #xbmcplugin.setContent(pluginhandle, 'Seasons')
 
                             else:
-                                mvl_meta = create_meta('tvshow', categories['title'].encode('utf-8'), '', '')
+                                mvl_meta = create_meta('tvshow', categories['title'].encode('utf-8'), categories['year'], '')
                                 mvl_tvshow_title = categories['title'].encode('utf-8')
 
                             dp_type = 'show'
@@ -1053,14 +1053,14 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
         global mvl_view_mode
         mvl_view_mode = 50
         try:
-            url = server_url + "/api/index.php/api/categories_api/getVideoUrls?video_id={0}".format(id)
+            url = server_url + "/api/index.php/api/categories_api/getVideoUrls?staging=1&video_id={0}".format(id)
+            plugin.log.info(url)
+
             req = urllib2.Request(url)
             opener = urllib2.build_opener()
             f = opener.open(req)
             content = f.read()
             jsonObj = json.loads(content)
-
-            #plugin.log.info(url)
 
             url = server_url + "/api/index.php/api/categories_api/getVideoTitle?video_id={0}".format(id)
             req = urllib2.Request(url)
@@ -1081,7 +1081,8 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
                           'replace_context_menu': True
                       }]
 
-            src_list = ['movreel', 'billionupload', 'firedrive', 'putlocker', 'novamov', 'nowvideo', 'thefile', 'bestream', 'mightyupload', 'promptfile', 'gorillavid']
+            src_list = ['movreel', 'firedrive', 'putlocker', 'mightyupload', 'promptfile', 'novamov', 'thefile', 'bestream', 'nowvideo', 'gorillavid']
+            # ['movreel', 'firedrive', 'putlocker', 'mightyupload', 'promptfile', 'novamov', 'realvid', 'streamin', 'vidzi', 'vidbull', 'thefile', 'bestream', 'nowvideo', 'gorillavid']
             # ['movreel', 'mightyupload', 'promptfile', 'firedrive', 'putlocker', 'novamov', 'nowvideo', 'gorillavid']
 
             for urls in jsonObj:
@@ -1146,7 +1147,7 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
                         items += [{
                                       'label': '{0} [COLOR FF235B9E]Source {1}[/COLOR] [COLOR {2}]{3}[/COLOR]'.format(content, count, source_color, source_quality),
                                       'thumbnail': thumbnail,
-                                      'path': plugin.url_for('show_popup', url=urls['URL'], resolved_url=urls['resolved_URL'], title='{0}'.format(content), trailer=trailer, parent_id=parent_id, video_id=id, series_name=series_name),
+                                      'path': plugin.url_for('show_popup', url=urls['URL'], resolved_url=urls['resolved_URL'], title='{0}'.format(content), trailer=trailer, parent_id=parent_id, video_id=id, series_name=series_name, source_id=urls['id']),
                                       'is_playable': False,
                                       'context_menu': [('','',)],
                                       'replace_context_menu': True
@@ -1180,7 +1181,7 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
                         items += [{
                                       'label': '{0} [COLOR FF235B9E]Source {1}[/COLOR] [COLOR {2}]{3}[/COLOR]'.format(content, count, source_color, source_quality),
                                       'thumbnail': thumbnail,
-                                      'path': plugin.url_for('show_popup', url=urls['URL'], resolved_url=urls['resolved_URL'], title='{0}'.format(content), trailer=trailer, parent_id=parent_id, video_id=id, series_name=series_name),
+                                      'path': plugin.url_for('show_popup', url=urls['URL'], resolved_url=urls['resolved_URL'], title='{0}'.format(content), trailer=trailer, parent_id=parent_id, video_id=id, series_name=series_name, source_id=urls['id']),
                                       'is_playable': False,
                                       'context_menu': [('','',)],
                                       'replace_context_menu': True
@@ -1200,8 +1201,8 @@ def get_videos(id, thumbnail, trailer, parent_id, series_name):
 
 video_popup = None
 
-@plugin.route('/show_popup/<url>/<resolved_url>/<title>/<trailer>/<parent_id>/<video_id>/<series_name>')
-def show_popup(url, resolved_url, title, trailer, parent_id, video_id, series_name):
+@plugin.route('/show_popup/<url>/<resolved_url>/<title>/<trailer>/<parent_id>/<video_id>/<series_name>/<source_id>')
+def show_popup(url, resolved_url, title, trailer, parent_id, video_id, series_name, source_id):
     global video_popup
 
     if parent_id == '1':
@@ -1228,7 +1229,7 @@ def show_popup(url, resolved_url, title, trailer, parent_id, video_id, series_na
         # series_id = mvl_meta['tmdb_id']
 
 
-    video_popup.setParams(trailer, url, resolved_url, video_title, video_id, series_id, mvl_meta)
+    video_popup.setParams(trailer, url, resolved_url, video_title, video_id, series_id, mvl_meta, source_id)
     video_popup.updateLabels()
 
     try:
@@ -1329,18 +1330,12 @@ def WatchedCallbackwithParams(video_type, title, imdb_id, season, episode, year)
         __metaget__.change_watched(video_type, title, imdb_id, season=season, episode=episode, year=year, watched=7)
 
 
-def play_video(url, resolved_url, title, video_type, meta):
+def play_video(url, resolved_url, title, video_type, meta, source_id):
     global mvl_view_mode
 
     mvl_view_mode = 50
-    #if login is successful then selected item will be resolved using urlresolver and played
-    # if login_check():
     unplayable = False
     try:
-        # if resolved_url != 'NONE':
-        #	  #no need to resolve the url on client side
-        #	  #use the pre-resolved url
-        #	  hostedurl = resolved_url
         if url.find('youtube.com') != -1:
             #this is youtube video
             #resolve ourselves
@@ -1349,17 +1344,6 @@ def play_video(url, resolved_url, title, video_type, meta):
             host, media_id = yt.get_host_and_id(url)
             hostedurl = yt.get_media_url(host, media_id)
         else:
-            #we have to resolve this url on client side cause it isn't pre-resolved or youtube url
-            #first import urlresolver
-            #as this takes a while, we'll be importing it only when required
-            # import urlresolver
-            # print 'Resolving....'
-            # plugin.log.info(url)
-            # hostedurl = urlresolver.HostedMediaFile(url).resolve()
-            # plugin.log.info(hostedurl)
-            # print "okay...got it...done."
-            # exit()'
-
             from resources import commonresolvers
             plugin.log.info(url)
             hostedurl = commonresolvers.get(url)
@@ -1371,15 +1355,6 @@ def play_video(url, resolved_url, title, video_type, meta):
                 source_url = source_url[source_url.find('www.')+4:]
 
             hide_busy_dialog()
-            #plugin.set_resolved_url(hostedurl)
-
-######################
-#			 if video_type == 'movie':
-#				 mvl_meta = create_meta('movie', title, '', '')
-#			 else:
-#			 #	   mvl_meta = create_meta('movie', title, '', '')
-#				 mvl_meta = {'year': ''}
-######################
 
             playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
             playlist.clear()
@@ -1398,16 +1373,24 @@ def play_video(url, resolved_url, title, video_type, meta):
                                         watchedCallbackwithParams=WatchedCallbackwithParams)
 
 
+            # player_status = player.play(playlist)
             player.play(playlist)
             play_started = 0
 
+            # print "PLAYER STATUS 1"
+            # print player_status
+            # player.pause()
+
             while player._playbackLock.isSet():
-                #print('- - -' +'Playback lock set. Sleeping for 250.')
+                # print('- - -' +'Playback lock set. Sleeping for 250.')
                 xbmc.sleep(250)
 
-                #play_started += 1
-                #if play_started == 20:
-                #    player.pause()
+                # play_started += 1
+                # if play_started == 20:
+                #     player.pause()
+
+            # print "PLAYER STATUS"
+            # print player_status
 
             #if we are here, it means playback has either stopped or finished
             #show popup again
@@ -1422,35 +1405,36 @@ def play_video(url, resolved_url, title, video_type, meta):
 
     if unplayable:
         #video not playable
-        #show error message
+        # show error message
         mvl_view_mode = 50
         hide_busy_dialog()
         showMessage('Error loading video', 'This source will not play. Please pick another.')
+
+        # show popup window
         resume_popup_window()
         return None
-
-
-    # else: #login_check
-    #	  hide_busy_dialog()
-    #	  pass
-
-    # else: #check_internet
-    #	  mvl_view_mode = 50
-    #	  dialog_msg()
-    #	  hide_busy_dialog()
 
 def create_meta(video_type, title, year, thumb, sub_cat=None, imdb_id=''):
     try:
         year = int(year)
+        year_int = year
     except:
         year = 0
     year = str(year)
     meta = {'title': title, 'year': year, 'imdb_id': '', 'overlay': '', 'duration': '', 'playcount': '' }
     try:
         if video_type == 'tvshow':
-            meta = __metaget__.get_meta(video_type, title)
-            if not (meta['imdb_id'] or meta['tvdb_id']):
+            meta = __metaget__.get_meta(video_type, title, year=year)
+
+            #if we get meta data where provided year doesn't match the meta year field
+            #we must have some wrong data in the cache. Clear earlier cache with only title only
+            # and try to get the data again using title and year
+            if 'year' in meta and meta['year'] != year_int:
+                __metaget__._cache_delete_video_meta(video_type, None, None, title, None)
                 meta = __metaget__.get_meta(video_type, title, year=year)
+
+            # if not (meta['imdb_id'] or meta['tvdb_id']):
+            #     meta = __metaget__.get_meta(video_type, title, year=year)
 
         elif video_type == 'movie':	 # movie
             meta = __metaget__.get_meta(video_type, title, year=year, imdb_id=imdb_id)
@@ -1616,13 +1600,13 @@ def search(category):
                                 is_season = False
                                 if 'parent_title' in categories:
                                     #this must be a TV Show Season list
-                                    mvl_meta = create_meta('tvshow', categories['parent_title'].encode('utf-8'), '', '')
+                                    mvl_meta = create_meta('tvshow', categories['parent_title'].encode('utf-8'), categories['parent_year'], '')
                                     mvl_tvshow_title = categories['parent_title'].encode('utf-8')
                                     is_season = True
                                     #xbmcplugin.setContent(pluginhandle, 'Seasons')
 
                                 else:
-                                    mvl_meta = create_meta('tvshow', categories['title'].encode('utf-8'), '', '')
+                                    mvl_meta = create_meta('tvshow', categories['title'].encode('utf-8'), categories['year'], '')
                                     mvl_tvshow_title = categories['title'].encode('utf-8')
 
                                 dp_type = 'show'
@@ -1939,14 +1923,14 @@ def get_azlist(key, page, category):
                                 is_season = False
                                 if 'parent_title' in results:
                                     #this must be a TV Show Season list
-                                    mvl_meta = create_meta('tvshow', results['parent_title'].encode('utf-8'), '', '')
+                                    mvl_meta = create_meta('tvshow', results['parent_title'].encode('utf-8'), results['parent_year'], '')
                                     mvl_tvshow_title = results['parent_title'].encode('utf-8')
                                     is_season = True
                                     #xbmcplugin.setContent(pluginhandle, 'Seasons')
 
 
                                 else:
-                                    mvl_meta = create_meta('tvshow', results['title'].encode('utf-8'), '', '')
+                                    mvl_meta = create_meta('tvshow', results['title'].encode('utf-8'), results['year'], '')
                                     mvl_tvshow_title = results['title'].encode('utf-8')
 
                                 dp_type = 'show'
@@ -2349,6 +2333,8 @@ class CustomTermsPopup(xbmcgui.WindowXMLDialog):
         self.close()
 
     def onClick	(self, control):
+        print "CONTROL IS"
+        print control
         if control == 11:
             self.close()
             onClick_agree()
@@ -2367,7 +2353,7 @@ class CustomPopup(xbmcgui.WindowXMLDialog):
     def __init__(self, xmlFilename, scriptPath, defaultSkin = "Default", defaultRes = "1080i"):
         pass
 
-    def setParams(self, trailer_id, source_url, resolved_url, title, video_id, series_id, mvl_meta):
+    def setParams(self, trailer_id, source_url, resolved_url, title, video_id, series_id, mvl_meta, source_id):
         self.trailer_id = trailer_id
         self.trailer_url = 'http://www.youtube.com/watch?v='+trailer_id
         self.source_url = source_url
@@ -2376,6 +2362,7 @@ class CustomPopup(xbmcgui.WindowXMLDialog):
         self.video_id = video_id
         self.series_id = series_id
         self.meta = mvl_meta
+        self.source_id = source_id
 
         if trailer_id == 'NONE' and series_id != 'NONE':
             self.video_type = 'episode'
@@ -2400,12 +2387,12 @@ class CustomPopup(xbmcgui.WindowXMLDialog):
                 showMessage('Error', 'No trailer found')
                 resume_popup_window()
             else:
-                play_video(self.trailer_url, 'NONE', self.title + ' - Official trailer', self.video_type, self.meta)
+                play_video(self.trailer_url, 'NONE', self.title + ' - Official trailer', self.video_type, self.meta, self.source_id)
 
 
         elif control == 22:
             self.close()
-            play_video(self.source_url, self.resolved_url, self.title, self.video_type, self.meta)
+            play_video(self.source_url, self.resolved_url, self.title, self.video_type, self.meta, self.source_id)
 
         elif control == 23:
             #exit
