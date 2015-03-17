@@ -1405,6 +1405,14 @@ def play_video(url, resolved_url, title, video_type, meta, source_id):
 
     if unplayable:
         #video not playable
+        #now save the info about this failed attempt in the server using pur api
+        url = server_url + "/api/index.php/api/source_quality_api/setFailedAttempt?source_id={0}".format(source_id)
+        req = urllib2.Request(url)
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        content = f.read()
+        #save done
+        
         # show error message
         mvl_view_mode = 50
         hide_busy_dialog()
