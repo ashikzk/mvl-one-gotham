@@ -1428,6 +1428,7 @@ def create_meta(video_type, title, year, thumb, sub_cat=None, imdb_id=''):
         year_int = year
     except:
         year = 0
+        year_int = year
     year = str(year)
     meta = {'title': title, 'year': year, 'imdb_id': '', 'overlay': '', 'duration': '', 'playcount': '' }
     try:
