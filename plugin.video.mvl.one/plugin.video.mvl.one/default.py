@@ -1350,7 +1350,7 @@ def play_video(url, resolved_url, title, video_type, meta, source_id):
         else:
             from resources import commonresolvers
             plugin.log.info(url)
-            hostedurl = commonresolvers.get(url)
+            hostedurl = commonresolvers.get(url).result
             plugin.log.info(hostedurl)
 
         if str(hostedurl)[0] == 'h':# or str(hostedurl)[0] == 'p':
